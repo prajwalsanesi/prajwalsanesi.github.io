@@ -42,9 +42,9 @@
     </div>
 
   <div class="row  col-lg-12">
-  <div class="row col-lg-1 col-md-12 mb-4">
-        <img src="http://placehold.it/100x100/3498db/fff" alt="" class="img-responsive"></div>
-<div class="row col-lg-1 col-md-12 mb-4"><img src="http://placehold.it/100x100/e74c3c/fff" alt="" class="img-responsive"></div>
+  <div class="row col-lg-1 col-md-12 mb-4" id="i1">
+        <img ng-src="{{bingo[0]}}" alt="{{name[0]}}" class="img-responsive" style="width: 100px;height: 90px;"><!-- <small>{{name[0]}}</small> --></div>
+<div class="row col-lg-1 col-md-12 mb-4" id="i2"><img ng-src="{{bingo[1]}}" alt="" class="img-responsive"></div>
         <div class="row col-lg-1 col-md-12 mb-4"><img src="http://placehold.it/100x100/f1c40f/fff" alt="" class="img-responsive"></div>
         <div class="row col-lg-1 col-md-12 mb-4"><img src="http://placehold.it/100x100/9b59b6/fff" alt="" class="img-responsive"></div>
     <div class="row col-lg-1 col-md-12 mb-4"><img src="http://placehold.it/100x100/f1c40f/fff" alt="" class="img-responsive"></div>
@@ -107,19 +107,37 @@
 <script>
 
     
-angular.module('BingoModule', []).controller("pssBingoController",function ($scope ,$http){
+angular.module('BingoModule', []).controller("pssBingoController",function ($scope , $rootScope,$http){
+    $rootScope.bingo=[];
+    $rootScope.name=[];
+
+$http.get("https://spreadsheets.google.com/feeds/cells/1v6DJSnwEWdcG02_tCqUPZjx-zAqlIxwV_0spLn_GpN8/4/public/full?alt=json")
+    .then(function(response) {
+
+    j1=response.data.feed.entry;
+    // console.log('j1',j1);
     
-
-$http.get("")
-    .success(function(response) {
-    j1=response;
-    for(idx in j1.data)
-    { //console.log(j1.data[idx].q+' > '+j1.data[idx].a);
-        $scope.questions.push([j1.data[idx].q,j1.data[idx].a]);
-    }
-    $scope.newQuestion();
+    j1.forEach(element => {
+        var row = element['gs$cell']['row'];
+        var col = element['gs$cell']['col'];
+        //// console.log(j1.data.feed.entry[0]['gs$cell']['$t']);
+        // console.log('row',element['gs$cell']['row']);
+        // console.log(element['gs$cell']['$t']);
+        if(col==2 && row>=2){
+            $scope.img = element['gs$cell']['$t'];
+            $rootScope.bingo.push($scope.img);
+        }
+        if(col==3 && row>=2){
+            $scope.name = element['gs$cell']['$t'];
+            $rootScope.name.push($scope.name);
+        }
+        
     });
-}); //End of Controller
-
+    console.log($scope.bingo)
+    // $scope.apply();
+    });
+}); //End of Controller https://docs.google.com/spreadsheets/d/e/2PACX-1vQg53NU_VtwaGMd3RCStuff0l2_IG0VjObEV17Xd5UcS1HacLqlWmaSoO_Y2x6BFLqb93MWheqGtVBu/pubhtml
+// https://spreadsheets.google.com/feeds/list/AC4w5Vi_T0HRRuGWo1go5-EH9qFy7-o45g:1587057825726/od6/public/values?alt=json-in-script&callback=
+// https://spreadsheets.google.com/feeds/cells/1v6DJSnwEWdcG02_tCqUPZjx-zAqlIxwV_0spLn_GpN8/1/public/full?alt=json
 </script>
 </html>
