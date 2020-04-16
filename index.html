@@ -109,6 +109,16 @@
     
 angular.module('BingoModule', []).controller("pssBingoController",function ($scope ,$http){
     
+
+$http.get("")
+    .success(function(response) {
+    j1=response;
+    for(idx in j1.data)
+    { //console.log(j1.data[idx].q+' > '+j1.data[idx].a);
+        $scope.questions.push([j1.data[idx].q,j1.data[idx].a]);
+    }
+    $scope.newQuestion();
+    });
 }); //End of Controller
 
 </script>
